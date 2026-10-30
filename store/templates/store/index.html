@@ -105,6 +105,18 @@
             letter-spacing: 1px;
         }
 
+        /* Scroll Animation Styles */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* Footer */
         footer {
             border-top: 1px solid #1a1a1a;
@@ -129,26 +141,26 @@
 </head>
 <body>
 
-<header>
-    <a href="/" class="brand-logo">N<span style="font-size: 0.85em; font-weight: 400;">e</span>X<span style="font-size: 0.85em; font-weight: 400;">ora</span></a>
-    <nav style="display: flex; gap: 20px; align-items: center;">
-        {% if user.is_authenticated %}
-            <span style="font-size: 13px; color: #888;">Member: {{ user.username }}</span>
-            <a href="{% url 'logout' %}" style="color: #fff; text-decoration: none; font-size: 13px; letter-spacing: 1px;">LOGOUT</a>
-        {% else %}
-            <a href="{% url 'login' %}" style="color: #fff; text-decoration: none; font-size: 13px; letter-spacing: 1px;">LOGIN</a>
-            <a href="{% url 'register' %}" style="background: #fff; color: #000; padding: 6px 16px; text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: 1px;">REGISTER</a>
-        {% endif %}
-    </nav>
-</header>
+    <header>
+        <a href="/" class="brand-logo">N<span style="font-size: 0.85em; font-weight: 400;">e</span>X<span style="font-size: 0.85em; font-weight: 400;">ora</span></a>
+        <nav style="display: flex; gap: 20px; align-items: center;">
+            {% if user.is_authenticated %}
+                <span style="font-size: 13px; color: #888;">Member: {{ user.username }}</span>
+                <a href="{% url 'logout' %}" style="color: #fff; text-decoration: none; font-size: 13px; letter-spacing: 1px;">LOGOUT</a>
+            {% else %}
+                <a href="{% url 'login' %}" style="color: #fff; text-decoration: none; font-size: 13px; letter-spacing: 1px;">LOGIN</a>
+                <a href="{% url 'register' %}" style="background: #fff; color: #000; padding: 6px 16px; text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: 1px;">REGISTER</a>
+            {% endif %}
+        </nav>
+    </header>
 
     <main>
-        <h1 class="section-title">Flagship Collection</h1>
+        <h1 class="section-title reveal">Flagship Collection</h1>
 
         {% if products %}
             <div class="product-grid">
                 {% for product in products %}
-                    <div class="product-card">
+                    <div class="product-card reveal">
                         {% if product.image %}
                             <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
                         {% else %}
@@ -160,7 +172,7 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div class="empty-state">
+            <div class="empty-state reveal">
                 <p>Curating new luxury items. Collection launching soon.</p>
             </div>
         {% endif %}
@@ -174,6 +186,22 @@
             <a href="https://wa.me/" target="_blank">WhatsApp Business</a>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const reveals = document.querySelectorAll(".reveal");
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("active");
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            reveals.forEach((el) => observer.observe(el));
+        });
+    </script>
 
 </body>
 </html>
