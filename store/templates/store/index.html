@@ -2,66 +2,167 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NeXora | Luxury Flagship Store</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-black text-white min-h-screen flex flex-col justify-between selection:bg-white selection:text-black">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-    <!-- Header / Navbar -->
-    <header class="p-6 border-b border-zinc-800 flex justify-between items-center max-w-7xl mx-auto w-full">
-        <h1 class="text-2xl font-bold tracking-widest uppercase">NeXora</h1>
-        <div class="space-x-4 text-sm font-medium">
-            {% if user.is_authenticated %}
-                <span class="text-zinc-400">Welcome, {{ user.username }}</span>
-                <a href="{% url 'logout' %}" class="hover:text-zinc-300 transition underline">Logout</a>
-            {% else %}
-                <a href="{% url 'login' %}" class="hover:text-zinc-300 transition">Login</a>
-                <a href="{% url 'register' %}" class="bg-white text-black px-4 py-2 rounded font-semibold hover:bg-zinc-200 transition">Register</a>
-            {% endif %}
-            <a href="/nexora-secret-admin-portal-99/" target="_blank" class="text-zinc-500 hover:text-zinc-300 transition ml-4">Admin</a>
-        </div>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Luxury Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 8%;
+            border-bottom: 1px solid #1a1a1a;
+            background-color: #000000;
+        }
+
+        .brand-logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        /* Container & Grid */
+        main {
+            flex: 1;
+            padding: 60px 8%;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .product-card {
+            background-color: #0d0d0d;
+            border: 1px solid #1a1a1a;
+            padding: 16px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            border-color: #333333;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 360px;
+            object-fit: cover;
+            background-color: #1a1a1a;
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        .product-title {
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            font-size: 14px;
+            color: #a1a1a1;
+            letter-spacing: 1px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 100px 20px;
+            color: #666666;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid #1a1a1a;
+            padding: 30px 8%;
+            text-align: center;
+            font-size: 12px;
+            color: #555555;
+            letter-spacing: 1px;
+        }
+
+        footer a {
+            color: #888888;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.2s ease;
+        }
+
+        footer a:hover {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/" class="brand-logo">N<span style="font-size: 0.85em; font-weight: 400;">e</span>X<span style="font-size: 0.85em; font-weight: 400;">ora</span></a>
     </header>
 
-    <!-- Main Content / Products Catalog -->
-    <main class="max-w-7xl mx-auto p-6 w-full flex-grow">
-        <div class="mb-10 text-center">
-            <h2 class="text-3xl font-light tracking-wide mb-2">Flagship Collection</h2>
-            <p class="text-zinc-400 text-sm">Exquisite luxury apparel designed for distinction.</p>
-        </div>
+    <main>
+        <h1 class="section-title">Flagship Collection</h1>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {% for product in products %}
-                <div class="bg-zinc-950 border border-zinc-800 p-5 rounded-none flex flex-col justify-between group">
-                    <div>
+        {% if products %}
+            <div class="product-grid">
+                {% for product in products %}
+                    <div class="product-card">
                         {% if product.image %}
-                            <div class="overflow-hidden mb-4 bg-zinc-900 h-96">
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                            </div>
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                        {% else %}
+                            <div class="product-image" style="display: flex; align-items: center; justify-content: center; color: #444;">No Image</div>
                         {% endif %}
-                        <h3 class="text-lg font-medium tracking-wide mb-1">{{ product.name }}</h3>
-                        <p class="text-zinc-400 font-semibold mb-4">${{ product.price }}</p>
+                        <h2 class="product-title">{{ product.name }}</h2>
+                        <p class="product-price">${{ product.price }}</p>
                     </div>
-
-                    <!-- WhatsApp Order Button -->
-                    <a href="https://wa.me/2349113127527?text=Hello%20NeXora,%20I%20would%20like%20to%20order%20{{ product.name|urlencode }}%20priced%20at%20${{ product.price }}" 
-                       target="_blank" 
-                       class="w-full text-center bg-white text-black font-medium py-3 rounded-none hover:bg-zinc-200 transition uppercase text-xs tracking-widest">
-                       Order via WhatsApp
-                    </a>
-                </div>
-            {% empty %}
-                <p class="col-span-3 text-center text-zinc-500 py-12">No products added yet. Log into your secret admin portal to add items!</p>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>Curating new luxury items. Collection launching soon.</p>
+            </div>
+        {% endif %}
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-zinc-800 py-8 text-center text-zinc-500 text-xs tracking-widest">
-        <p class="mb-4">© 2026 NeXora. All rights reserved.</p>
-        <div class="flex justify-center space-x-6">
-            <a href="https://instagram.com/your_instagram" target="_blank" class="hover:text-white transition">Instagram</a>
-            <a href="https://tiktok.com/@your_tiktok" target="_blank" class="hover:text-white transition">TikTok</a>
-            <a href="https://wa.me/2349113127527" target="_blank" class="hover:text-white transition">WhatsApp Business</a>
+    <footer>
+        <p>&copy; 2026 NeXora. All rights reserved.</p>
+        <div style="margin-top: 10px;">
+            <a href="https://instagram.com" target="_blank">Instagram</a> |
+            <a href="https://tiktok.com" target="_blank">TikTok</a> |
+            <a href="https://wa.me/" target="_blank">WhatsApp Business</a>
         </div>
     </footer>
 
