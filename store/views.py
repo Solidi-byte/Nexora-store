@@ -1,15 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import Product, Order
 
 
+@login_required(login_url='login')
 def index(request):
     """
-    Main storefront view displaying the flagship collection.
+    Exclusive catalog view—accessible only to logged-in members.
     """
     try:
         products = Product.objects.all()
@@ -23,6 +25,9 @@ def register_view(request):
     """
     Handles customer registration.
     """
+    if request.user.is_authenticated:
+        return redirect('index')
+
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -37,8 +42,11 @@ def register_view(request):
 
 def login_view(request):
     """
-    Handles user login.
+    Handles member login.
     """
+    if request.user.is_authenticated:
+        return redirect('index')
+
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -55,12 +63,13 @@ def logout_view(request):
     Logs out current user session.
     """
     logout(request)
-    return redirect('index')
+    return redirect('login')
 
 
+@login_required(login_url='login')
 def process_checkout(request):
     """
-    Processes order creation and sends email notification to store owner.
+    Processes order creation and emails owner.
     """
     if request.method == 'POST':
         full_name = request.POST.get('full_name')
@@ -69,9 +78,8 @@ def process_checkout(request):
         address = request.POST.get('address')
         total = request.POST.get('total', '0.00')
 
-        # Create Order Record
         order = Order.objects.create(
-            user=request.user if request.user.is_authenticated else None,
+            user=request.user,
             full_name=full_name,
             email=email,
             phone=phone,
@@ -79,7 +87,6 @@ def process_checkout(request):
             total_amount=total
         )
 
-        # Send alert email to store owner
         subject = f"🚨 New NeXora Order #{order.id}"
         message = (
             f"New order received!\n\n"
@@ -100,7 +107,7 @@ def process_checkout(request):
                 fail_silently=True
             )
         except Exception:
-            pass  # Ensures order success renders even if email sending encounters network/SMTP delays
+            pass
 
         return render(request, 'store/order_success.html', {'order': order})
 

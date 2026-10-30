@@ -129,9 +129,18 @@
 </head>
 <body>
 
-    <header>
-        <a href="/" class="brand-logo">N<span style="font-size: 0.85em; font-weight: 400;">e</span>X<span style="font-size: 0.85em; font-weight: 400;">ora</span></a>
-    </header>
+<header>
+    <a href="/" class="brand-logo">N<span style="font-size: 0.85em; font-weight: 400;">e</span>X<span style="font-size: 0.85em; font-weight: 400;">ora</span></a>
+    <nav style="display: flex; gap: 20px; align-items: center;">
+        {% if user.is_authenticated %}
+            <span style="font-size: 13px; color: #888;">Member: {{ user.username }}</span>
+            <a href="{% url 'logout' %}" style="color: #fff; text-decoration: none; font-size: 13px; letter-spacing: 1px;">LOGOUT</a>
+        {% else %}
+            <a href="{% url 'login' %}" style="color: #fff; text-decoration: none; font-size: 13px; letter-spacing: 1px;">LOGIN</a>
+            <a href="{% url 'register' %}" style="background: #fff; color: #000; padding: 6px 16px; text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: 1px;">REGISTER</a>
+        {% endif %}
+    </nav>
+</header>
 
     <main>
         <h1 class="section-title">Flagship Collection</h1>
