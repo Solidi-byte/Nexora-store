@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Category(models.Model):
-    name = models.CharField(max_length=50) # Hoodie, Pants, Polo T-Shirts, Trousers, Shorts, Armless
+    name = models.CharField(max_length=50) # Set, Baggy Pants, Shirts, Shorts, Jackets, Pants
     slug = models.SlugField(unique=True)
 
     class Meta:
