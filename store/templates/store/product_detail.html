@@ -1,14 +1,258 @@
-<div class="bg-zinc-900 border border-zinc-800 p-4 rounded">
-    {% if product.image %}
-        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-80 object-cover mb-4">
-    {% endif %}
-    <h3 class="text-lg font-semibold">{{ product.name }}</h3>
-    <p class="text-gray-400 mb-4">${{ product.price }}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeXora | {{ product.name }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-    <!-- PASTE WHATSAPP LINK HERE -->
-    <a href="https://wa.me/2349113127527?text=Hello%20NeXora,%20I%20want%20to%20order%20{{ product.name|urlencode }}%20priced%20at%20${{ product.price }}" 
-       target="_blank" 
-       class="inline-block bg-green-600 text-white font-medium px-4 py-2 rounded hover:bg-green-500 transition">
-       Order via WhatsApp
-    </a>
-</div>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Luxury Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 8%;
+            border-bottom: 1px solid #1a1a1a;
+            background-color: #000000;
+        }
+
+        .brand-logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .back-link {
+            color: #888;
+            text-decoration: none;
+            font-size: 13px;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #fff;
+        }
+
+        /* Main Container */
+        main {
+            flex: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 60px 8%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            background-color: #0d0d0d;
+            border: 1px solid #1a1a1a;
+            display: block;
+        }
+
+        .product-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            font-size: 26px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .product-price {
+            font-size: 18px;
+            color: #a1a1a1;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+
+        .product-desc {
+            font-size: 14px;
+            color: #777;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .selection-group {
+            margin-bottom: 20px;
+        }
+
+        .selection-group label {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .selection-group select {
+            width: 100%;
+            padding: 14px;
+            background-color: #0d0d0d;
+            border: 1px solid #262626;
+            color: #ffffff;
+            font-size: 14px;
+            letter-spacing: 1px;
+            outline: none;
+            border-radius: 0;
+            transition: border-color 0.2s;
+        }
+
+        .selection-group select:focus {
+            border-color: #555;
+        }
+
+        .whatsapp-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background-color: #ffffff;
+            color: #000000;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 30px;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #e6e6e6;
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid #1a1a1a;
+            padding: 30px 8%;
+            text-align: center;
+            font-size: 12px;
+            color: #555555;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 30px 5%;
+            }
+            .product-image {
+                height: 380px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/" class="brand-logo">N<span style="font-size: 0.85em; font-weight: 400;">e</span>X<span style="font-size: 0.85em; font-weight: 400;">ora</span></a>
+        <a href="/" class="back-link">&larr; Back to Catalog</a>
+    </header>
+
+    <main>
+        <div>
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% else %}
+                <div class="product-image" style="display: flex; align-items: center; justify-content: center; color: #444;">No Image Available</div>
+            {% endif %}
+        </div>
+
+        <div class="product-details">
+            <h1 class="product-title">{{ product.name }}</h1>
+            <p class="product-price">${{ product.price }}</p>
+            
+            {% if product.description %}
+                <p class="product-desc">{{ product.description }}</p>
+            {% endif %}
+
+            <!-- Color Selection -->
+            <div class="selection-group">
+                <label for="colorSelect">Select Color</label>
+                <select id="colorSelect">
+                    <option value="Black">Black</option>
+                    <option value="White">White</option>
+                    <option value="Brown">Brown</option>
+                    <option value="Grey">Grey</option>
+                </select>
+            </div>
+
+            <!-- Size Selection -->
+            <div class="selection-group">
+                <label for="sizeSelect">Select Size</label>
+                <select id="sizeSelect">
+                    <option value="Small (S)">Small (S)</option>
+                    <option value="Medium (M)">Medium (M)</option>
+                    <option value="Large (L)">Large (L)</option>
+                    <option value="X-Large (XL)">X-Large (XL)</option>
+                    <option value="XX-Large (XXL)">XX-Large (XXL)</option>
+                </select>
+            </div>
+
+            <!-- Dynamic WhatsApp Order Link -->
+            <a id="whatsappOrderBtn" href="#" target="_blank" class="whatsapp-btn">
+                Order via WhatsApp
+            </a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 NeXora. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Dynamically updates the WhatsApp link based on selected Color and Size
+        function updateWhatsAppLink() {
+            const color = document.getElementById('colorSelect').value;
+            const size = document.getElementById('sizeSelect').value;
+            const productName = "{{ product.name|escapejs }}";
+            const productPrice = "${{ product.price }}";
+
+            const message = `Hello NeXora, I want to order:\n\n*${productName}*\nPrice: ${productPrice}\nColor: ${color}\nSize: ${size}\n\nPlease guide me on payment and delivery.`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/2349113127527?text=${encodedMessage}`;
+            
+            document.getElementById('whatsappOrderBtn').setAttribute('href', whatsappUrl);
+        }
+
+        document.getElementById('colorSelect').addEventListener('change', updateWhatsAppLink);
+        document.getElementById('sizeSelect').addEventListener('change', updateWhatsAppLink);
+
+        // Initialize on page load
+        window.onload = updateWhatsAppLink;
+    </script>
+
+</body>
+</html>

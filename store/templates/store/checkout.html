@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NeXora | Payment & Checkout</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, sans-serif; }
+        body { background:#050505; color:#fff; padding: 40px 8%; }
+        .checkout-box { max-width: 600px; margin: 0 auto; background: #0d0d0d; border: 1px solid #1a1a1a; padding: 40px; }
+        .bank-details { background: #141414; border: 1px solid #262626; padding: 20px; margin-bottom: 30px; }
+        .bank-details h3 { font-size: 14px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; color: #fff; }
+        .bank-details p { font-size: 13px; color: #aaa; margin-bottom: 6px; }
+        input, textarea { width: 100%; padding: 12px; background: #141414; border: 1px solid #262626; color: #fff; margin-bottom: 16px; }
+        button { width: 100%; padding: 16px; background: #fff; color: #000; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="checkout-box">
+        <h2 style="margin-bottom: 20px; font-weight: 300;">Complete Order</h2>
+        <p style="color:#aaa; margin-bottom: 20px;">Item: {{ product.name }} | {{ size }} | {{ color }} (${{ product.price }})</p>
+
+        <!-- Account / Payment Details Section -->
+        <div class="bank-details">
+            <h3>Direct Bank Transfer Details</h3>
+            <p><strong>Bank Name:</strong> [Your Bank Name]</p>
+            <p><strong>Account Name:</strong> NeXora Limited / [Your Name]</p>
+            <p><strong>Account Number:</strong> [Your Account Number]</p>
+            <p style="font-size: 11px; color: #666; margin-top: 10px;">Please transfer the total amount above and fill in your delivery information below.</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="full_name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+            <input type="text" name="phone" placeholder="Phone Number" required>
+            <textarea name="address" placeholder="Delivery Address" rows="3" required></textarea>
+            <button type="submit">Confirm Payment & Order</button>
+        </form>
+    </div>
+</body>
+</html>

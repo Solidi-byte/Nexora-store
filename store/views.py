@@ -3,27 +3,77 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.mail import send_mail
-from django.conf import settings
-from .models import Product, Order
+from .models import Product, Category
 
 
 @login_required(login_url='login')
 def index(request):
     """
-    Exclusive catalog view—accessible only to logged-in members.
+    Exclusive catalog view with category genre filtering.
     """
-    try:
+    category_slug = request.GET.get('category')
+    categories = Category.objects.all()
+    
+    if category_slug:
+        products = Product.objects.filter(category__slug=category_slug)
+    else:
         products = Product.objects.all()
-    except Exception:
-        products = []
         
-    return render(request, 'store/index.html', {'products': products})
+    return render(request, 'store/index.html', {
+        'products': products,
+        'categories': categories,
+        'current_category': category_slug
+    })
+
+
+@login_required(login_url='login')
+def product_detail(request, pk):
+    """
+    Product detail page for color and size selection.
+    """
+    product = get_object_or_404(Product, pk=pk)
+    colors = ['Black', 'White', 'Brown', 'Grey']
+    sizes = ['Small (S)', 'Medium (M)', 'Large (L)', 'X-Large (XL)', 'XX-Large (XXL)']
+    return render(request, 'store/product_detail.html', {
+        'product': product,
+        'colors': colors,
+        'sizes': sizes
+    })
+
+
+@login_required(login_url='login')
+def checkout(request, pk):
+    """
+    Payment and checkout page with account details and order submission.
+    """
+    product = get_object_or_404(Product, pk=pk)
+    selected_color = request.GET.get('color', 'Black')
+    selected_size = request.GET.get('size', 'Medium (M)')
+
+    if request.method == 'POST':
+        full_name = request.POST.get('full_name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+
+        # Order processing & confirmation render
+        return render(request, 'store/order_success.html', {
+            'product': product,
+            'color': selected_color,
+            'size': selected_size,
+            'full_name': full_name
+        })
+
+    return render(request, 'store/checkout.html', {
+        'product': product,
+        'color': selected_color,
+        'size': selected_size
+    })
 
 
 def register_view(request):
     """
-    Handles customer registration.
+    Handles customer registration for store access.
     """
     if request.user.is_authenticated:
         return redirect('index')
@@ -42,7 +92,7 @@ def register_view(request):
 
 def login_view(request):
     """
-    Handles member login.
+    Handles member authentication login.
     """
     if request.user.is_authenticated:
         return redirect('index')
@@ -60,55 +110,7 @@ def login_view(request):
 
 def logout_view(request):
     """
-    Logs out current user session.
+    Logs out the current user session.
     """
     logout(request)
     return redirect('login')
-
-
-@login_required(login_url='login')
-def process_checkout(request):
-    """
-    Processes order creation and emails owner.
-    """
-    if request.method == 'POST':
-        full_name = request.POST.get('full_name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        address = request.POST.get('address')
-        total = request.POST.get('total', '0.00')
-
-        order = Order.objects.create(
-            user=request.user,
-            full_name=full_name,
-            email=email,
-            phone=phone,
-            shipping_address=address,
-            total_amount=total
-        )
-
-        subject = f"🚨 New NeXora Order #{order.id}"
-        message = (
-            f"New order received!\n\n"
-            f"Customer: {full_name}\n"
-            f"Email: {email}\n"
-            f"Phone: {phone}\n"
-            f"Total: ${total}\n\n"
-            f"Address:\n{address}"
-        )
-        
-        try:
-            owner_email = getattr(settings, 'OWNER_EMAIL', settings.DEFAULT_FROM_EMAIL)
-            send_mail(
-                subject, 
-                message, 
-                settings.DEFAULT_FROM_EMAIL, 
-                [owner_email], 
-                fail_silently=True
-            )
-        except Exception:
-            pass
-
-        return render(request, 'store/order_success.html', {'order': order})
-
-    return redirect('index')
